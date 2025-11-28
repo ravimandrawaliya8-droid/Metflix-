@@ -1,3 +1,3 @@
-pyrogram==2.2.21
+pyrogram==2.0.106
 tgcrypto==1.3.1
 Flask==2.3.5
