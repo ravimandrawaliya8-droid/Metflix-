@@ -1,4 +1,7 @@
-Flask==2.2.5
-pyrogram==2.0.106
-psycopg[binary]==3.2.13
-requests==2.31.0
+Flask
+pyrogram
+tgcrypto
+sqlalchemy
+psycopg2-binary
+python-dotenv
+requests
