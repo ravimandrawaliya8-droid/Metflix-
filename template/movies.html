@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metflic • Movies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a14;
+            --card: #1a1a2e;
+            --accent: #e50914;
+            --text: #ffffff;
+            --muted: #a0a0c0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(135deg, #080811, #0a0a14);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .search-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px 15px;
+            width: 300px;
+            display: flex;
+            align-items: center;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            font-size: 16px;
+            padding: 5px;
+            outline: none;
+        }
+        .hero {
+            background: linear-gradient(135deg, #1a1a2e, #e5091420);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            color: var(--muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        .category-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .filter-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+        .card-info {
+            padding: 15px;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .card-year {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        .card-rating {
+            display: inline-block;
+            background: #ffd700;
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .section-title {
+            font-size: 28px;
+            margin: 40px 0 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+            font-size: 18px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        .page-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+        .page-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .page-btn.active {
+            background: var(--accent);
+        }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--muted);
+            margin-top: 50px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .trending-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .card {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="logo">🎬 MOVIES</a>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search movies...">
+            </div>
+        </header>
+
+        <div class="hero">
+            <h1>Hollywood & Bollywood</h1>
+            <p>Watch latest movies in HD quality. All genres available.</p>
+        </div>
+
+        <div class="category-filters">
+            <button class="filter-btn active" onclick="filterMovies('all')">All</button>
+            <button class="filter-btn" onclick="filterMovies('action')">Action</button>
+            <button class="filter-btn" onclick="filterMovies('comedy')">Comedy</button>
+            <button class="filter-btn" onclick="filterMovies('drama')">Drama</button>
+            <button class="filter-btn" onclick="filterMovies('horror')">Horror</button>
+            <button class="filter-btn" onclick="filterMovies('sci-fi')">Sci-Fi</button>
+            <button class="filter-btn" onclick="filterMovies('romance')">Romance</button>
+        </div>
+
+        <h2 class="section-title">Latest Movies</h2>
+        <div class="grid" id="moviesGrid"></div>
+
+        <div class="loading" id="loading">Loading movies...</div>
+
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <footer>
+        © 2024 Metflic • Unlimited Movie Streaming
+    </footer>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const FALLBACK_POSTER = 'https://via.placeholder.com/300x450/1a1a2e/ffffff?text=Movie';
+
+        let currentPage = 1;
+        let currentFilter = 'all';
+        let allMovies = [];
+
+        async function loadMovies() {
+            try {
+                document.getElementById('loading').innerHTML = 'Loading movies...';
+                
+                // Load movies data
+                const response = await fetch(`${API_BASE}/api/category/movies`);
+                const data = await response.json();
+                
+                if (data.ok && data.sections) {
+                    // Combine all sections
+                    allMovies = [
+                        ...(data.sections.trending || []),
+                        ...(data.sections.popular || []),
+                        ...(data.sections.latest || [])
+                    ];
+                    
+                    // Remove duplicates
+                    allMovies = Array.from(new Set(allMovies.map(m => m.slug)))
+                        .map(slug => allMovies.find(m => m.slug === slug));
+                    
+                    displayMovies();
+                    setupPagination();
+                    document.getElementById('loading').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading movies:', error);
+                document.getElementById('loading').innerHTML = 'Error loading movies. Please try again.';
+            }
+        }
+
+        function displayMovies() {
+            const grid = document.getElementById('moviesGrid');
+            grid.innerHTML = '';
+            
+            // Filter movies if needed
+            let filteredMovies = allMovies;
+            if (currentFilter !== 'all') {
+                // In real app, you would filter by genre
+                filteredMovies = allMovies;
+            }
+            
+            // Calculate pagination
+            const itemsPerPage = 20;
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageMovies = filteredMovies.slice(startIndex, endIndex);
+            
+            // Display movies
+            pageMovies.forEach(movie => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                // Check if movie is trending (first 10)
+                const isTrending = allMovies.indexOf(movie) < 10;
+                
+                card.innerHTML = `
+                    ${isTrending ? '<div class="trending-badge">🔥 Trending</div>' : ''}
+                    <img src="${movie.poster || FALLBACK_POSTER}" alt="${movie.title}">
+                    <div class="card-info">
+                        <div class="card-title">${movie.title}</div>
+                        <div class="card-year">${movie.year || ''}</div>
+                        ${movie.rating ? `<div class="card-rating">⭐ ${movie.rating}</div>` : ''}
+                    </div>
+                `;
+                
+                card.onclick = () => {
+                    window.location.href = `/detail.html?slug=${encodeURIComponent(movie.slug)}`;
+                };
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function setupPagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            const totalPages = Math.ceil(allMovies.length / 20);
+            if (totalPages <= 1) return;
+            
+            // Previous button
+            if (currentPage > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'page-btn';
+                prevBtn.innerHTML = '←';
+                prevBtn.onclick = () => {
+                    currentPage--;
+                    displayMovies();
+                    setupPagination();
+                };
+                pagination.appendChild(prevBtn);
+            }
+            
+            // Page numbers
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.innerHTML = i;
+                pageBtn.onclick = () => {
+                    currentPage = i;
+                    displayMovies();
+                    setupPagination();
+                };
+                pagination.appendChild(pageBtn);
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'page-btn';
+                nextBtn.innerHTML = '→';
+                nextBtn.onclick = () => {
+                    currentPage++;
+                    displayMovies();
+                    setupPagination();
+                };
+                pagination.appendChild(nextBtn);
+            }
+        }
+
+        function filterMovies(genre) {
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            currentFilter = genre;
+            currentPage = 1;
+            displayMovies();
+            setupPagination();
+        }
+
+        // Setup search
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                if (query) {
+                    window.location.href = `/list.html?type=movies&q=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+
+        // Load on page load
+        window.addEventListener('DOMContentLoaded', loadMovies);
+    </script>
+</body>
+            </html>

@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metflic - Stream Movies & TV Shows</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #e50914;
+            --primary-dark: #b20710;
+            --secondary: #221f1f;
+            --light: #f5f5f1;
+            --dark: #221f1f;
+            --gray: #808080;
+            --gray-light: #2d2d2d;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: #141414;
+            color: var(--light);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            background-color: var(--dark);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 16px;
+            transition: var(--transition);
+            padding: 8px 0;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            padding: 8px 15px;
+            width: 300px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            width: 100%;
+            padding: 5px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-box button {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1925&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            margin-top: -80px;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: rgba(109, 109, 110, 0.7);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(109, 109, 110, 0.9);
+            transform: translateY(-2px);
+        }
+
+        /* Categories */
+        .categories {
+            padding: 60px 5%;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .category-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            background-color: var(--gray-light);
+            border: none;
+            border-radius: 20px;
+            color: var(--light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background-color: var(--primary);
+        }
+
+        /* Movies Grid */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .movie-card {
+            background-color: var(--gray-light);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+
+        .movie-poster {
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .movie-info {
+            padding: 15px;
+        }
+
+        .movie-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .movie-rating {
+            color: #f5c518;
+        }
+
+        .movie-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .movie-card:hover .movie-overlay {
+            opacity: 1;
+        }
+
+        .movie-overlay-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .overlay-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background-color: rgba(0,0,0,0.6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .overlay-btn:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Trending Now */
+        .trending-now {
+            padding: 60px 5%;
+            background-color: #0f0f0f;
+        }
+
+        .trending-slider {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trending-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 20px 0;
+            scroll-behavior: smooth;
+        }
+
+        .trending-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0,0,0,0.7);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: var(--transition);
+        }
+
+        .slider-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .slider-btn.prev {
+            left: 10px;
+        }
+
+        .slider-btn.next {
+            right: 10px;
+        }
+
+        .trending-card {
+            min-width: 300px;
+            background-color: var(--gray-light);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .trending-card:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            padding: 60px 5% 30px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 20px;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--gray);
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .search-box {
+                width: 250px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 5%;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            nav {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--dark);
+                flex-direction: column;
+                padding: 20px;
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            }
+            
+            nav.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .search-box {
+                width: 100%;
+                margin-top: 20px;
+            }
+            
+            .hero {
+                margin-top: -100px;
+                height: 80vh;
+                text-align: center;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .trending-card {
+                min-width: 250px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+            
+            .movie-poster {
+                height: 200px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <a href="/" class="logo">
+            <i class="fas fa-film"></i>
+            METFLIC
+        </a>
+        
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <nav id="mainNav">
+            <a href="/">Home</a>
+            <a href="/movies">Movies</a>
+            <a href="/tv">TV Shows</a>
+            <a href="/anime">Anime</a>
+            <a href="/drama">Drama</a>
+            <a href="/cartoon">Cartoon</a>
+            <a href="/webseries">Web Series</a>
+            <a href="/list">My List</a>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search movies, TV shows...">
+                <button id="searchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="heroSection">
+        <div class="hero-content">
+            <h1>Unlimited Movies, TV Shows & More</h1>
+            <p>Watch anywhere. Cancel anytime. Ready to watch? Click below to explore our vast library of content.</p>
+            <div class="hero-buttons">
+                <a href="/movies" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Watch Now
+                </a>
+                <a href="/list" class="btn btn-secondary">
+                    <i class="fas fa-plus"></i> My List
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories">
+        <h2 class="section-title">
+            Browse by Category
+            <a href="/movies">View All <i class="fas fa-arrow-right"></i></a>
+        </h2>
+        
+        <div class="category-buttons" id="categoryButtons">
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="action">Action</button>
+            <button class="category-btn" data-category="comedy">Comedy</button>
+            <button class="category-btn" data-category="drama">Drama</button>
+            <button class="category-btn" data-category="horror">Horror</button>
+            <button class="category-btn" data-category="sci-fi">Sci-Fi</button>
+            <button class="category-btn" data-category="romance">Romance</button>
+            <button class="category-btn" data-category="animation">Animation</button>
+        </div>
+
+        <!-- Latest Movies -->
+        <h3 class="section-title">Latest Movies</h3>
+        <div class="loading-spinner" id="latestLoading">
+            <div class="spinner"></div>
+            <p>Loading movies...</p>
+        </div>
+        <div class="movies-grid" id="latestMovies"></div>
+
+        <!-- Popular Movies -->
+        <h3 class="section-title">Popular on Metflic</h3>
+        <div class="loading-spinner" id="popularLoading">
+            <div class="spinner"></div>
+            <p>Loading popular content...</p>
+        </div>
+        <div class="movies-grid" id="popularMovies"></div>
+    </section>
+
+    <!-- Trending Now -->
+    <section class="trending-now">
+        <h2 class="section-title">
+            Trending Now
+            <a href="/trending">See More <i class="fas fa-arrow-right"></i></a>
+        </h2>
+        
+        <div class="trending-slider">
+            <button class="slider-btn prev" id="prevBtn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="loading-spinner" id="trendingLoading">
+                <div class="spinner"></div>
+                <p>Loading trending content...</p>
+            </div>
+            <div class="trending-container" id="trendingContainer"></div>
+            
+            <button class="slider-btn next" id="nextBtn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>METFLIC</h3>
+                <p>The best streaming platform for movies, TV shows, anime, and more. Watch anywhere, anytime.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/movies">Movies</a></li>
+                    <li><a href="/tv">TV Shows</a></li>
+                    <li><a href="/anime">Anime</a></li>
+                    <li><a href="/webseries">Web Series</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul class="footer-links">
+                    <li><a href="/movies?category=action">Action</a></li>
+                    <li><a href="/movies?category=comedy">Comedy</a></li>
+                    <li><a href="/movies?category=drama">Drama</a></li>
+                    <li><a href="/movies?category=horror">Horror</a></li>
+                    <li><a href="/movies?category=sci-fi">Sci-Fi</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Metflic. All rights reserved. | Made with <i class="fas fa-heart" style="color: var(--primary);"></i> for movie lovers</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('mainNav').classList.toggle('active');
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Search functionality
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const query = document.getElementById('searchInput').value;
+            if (query.trim()) {
+                window.location.href = `/search?q=${encodeURIComponent(query)}`;
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value;
+                if (query.trim()) {
+                    window.location.href = `/search?q=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+
+        // Category buttons
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                loadMoviesByCategory(category);
+            });
+        });
+
+        // Trending slider
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const trendingContainer = document.getElementById('trendingContainer');
+
+        if (prevBtn && nextBtn && trendingContainer) {
+            prevBtn.addEventListener('click', () => {
+                trendingContainer.scrollBy({ left: -300, behavior: 'smooth' });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                trendingContainer.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+        }
+
+        // Load data from API
+        async function loadHomeData() {
+            try {
+                // Show loading spinners
+                document.getElementById('latestLoading').style.display = 'block';
+                document.getElementById('popularLoading').style.display = 'block';
+                document.getElementById('trendingLoading').style.display = 'block';
+                
+                // Fetch homepage data
+                const response = await fetch('/api/home');
+                const data = await response.json();
+                
+                if (data.ok) {
+                    // Populate latest movies
+                    const latestMoviesContainer = document.getElementById('latestMovies');
+                    if (data.latest && data.latest.length > 0) {
+                        latestMoviesContainer.innerHTML = data.latest.map(movie => `
+                            <div class="movie-card" onclick="viewMovie('${movie.slug}')">
+                                <div class="movie-poster">
+                                    <img src="${movie.poster || 'https://via.placeholder.com/300x450?text=No+Image'}" alt="${movie.title}">
+                                    <div class="movie-overlay">
+                                        <h4 class="movie-title">${movie.title}</h4>
+                                        <p class="movie-meta">
+                                            <span>${movie.year || 'N/A'}</span>
+                                            <span class="movie-rating"><i class="fas fa-star"></i> 7.5</span>
+                                        </p>
+                                        <div class="movie-overlay-buttons">
+                                            <button class="overlay-btn" onclick="event.stopPropagation(); addToList('${movie.slug}')">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                            <button class="overlay-btn" onclick="event.stopPropagation(); viewMovie('${movie.slug}')">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="movie-info">
+                                    <h4 class="movie-title">${movie.title}</h4>
+                                    <p class="movie-meta">
+                                        <span>${movie.year || 'N/A'}</span>
+                                        <span class="movie-rating"><i class="fas fa-star"></i> 7.5</span>
+                                    </p>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                    
+                    // Populate popular movies
+                    const popularMoviesContainer = document.getElementById('popularMovies');
+                    if (data.popular && data.popular.length > 0) {
+                        popularMoviesContainer.innerHTML = data.popular.map(movie => `
+                            <div class="movie-card" onclick="viewMovie('${movie.slug}')">
+                                <div class="movie-poster">
+                                    <img src="${movie.poster || 'https://via.placeholder.com/300x450?text=No+Image'}" alt="${movie.title}">
+                                    <div class="movie-overlay">
+                                        <h4 class="movie-title">${movie.title}</h4>
+                                        <p class="movie-meta">
+                                            <span>${movie.year || 'N/A'}</span>
+                                            <span class="movie-rating"><i class="fas fa-star"></i> 8.0</span>
+                                        </p>
+                                        <div class="movie-overlay-buttons">
+                                            <button class="overlay-btn" onclick="event.stopPropagation(); addToList('${movie.slug}')">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                            <button class="overlay-btn" onclick="event.stopPropagation(); viewMovie('${movie.slug}')">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="movie-info">
+                                    <h4 class="movie-title">${movie.title}</h4>
+                                    <p class="movie-meta">
+                                        <span>${movie.year || 'N/A'}</span>
+                                        <span class="movie-rating"><i class="fas fa-star"></i> 8.0</span>
+                                    </p>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                    
+                    //Populate trending
+                    const trendingContainer = document.getElementById('trendingContainer');
+                    if (data.trending && data.trending.length > 0) {
+                        trendingContainer.innerHTML = data.trending.map(movie => `
+                            <div class="trending-card" onclick="viewMovie('${movie.slug}')">
+                                <div class="movie-poster" style="height: 400px;">
+                                    <img src="${movie.poster || 'https://via.placeholder.com/300x400?text=No+Image'}" alt="${movie.title}">
+                                    <div class="movie-overlay">
+                                        <h4 class="movie-title">${movie.title}</h4>
+                                        <p class="movie-meta">
+                                            <span>${movie.year || 'N/A'}</span>
+                                            <span class="movie-rating"><i class="fas fa-star"></i> 8.5</span>
+                                        </p>
+                                        <div class="movie-overlay-buttons">
+                                            <button class="overlay-btn" onclick="event.stopPropagation(); addToList('${movie.slug}')">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                            <button class="overlay-btn" onclick="event.stopPropagation(); viewMovie('${movie.slug}')">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                    
+                    // Hide loading spinners
+                    document.getElementById('latestLoading').style.display = 'none';
+                    document.getElementById('popularLoading').style.display = 'none';
+                    document.getElementById('trendingLoading').style.display = 'none';
+                    
+                } else {
+                    throw new Error('Failed to load data');
+                }
+            } catch (error) {
+                console.error('Error loading home data:', error);
+                
+                // Hide loading spinners
+                document.getElementById('latestLoading').style.display = 'none';
+                document.getElementById('popularLoading').style.display = 'none';
+                document.getElementById('trendingLoading').style.display = 'none';
+                
+                // Show error messages
+                document.getElementById('latestMovies').innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+                        <h3>Failed to load movies</h3>
+                        <p>Please try again later</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load movies by category
+        async function loadMoviesByCategory(category) {
+            try {
+                const response = await fetch(`/api/search?q=${category}&category=${category}`);
+                const data = await response.json();
+                
+                if (data.ok && data.results.length > 0) {
+                    const latestMoviesContainer = document.getElementById('latestMovies');
+                    latestMoviesContainer.innerHTML = data.results.map(movie => `
+                        <div class="movie-card" onclick="viewMovie('${movie.slug}')">
+                            <div class="movie-poster">
+                                <img src="${movie.poster || 'https://via.placeholder.com/300x450?text=No+Image'}" alt="${movie.title}">
+                                <div class="movie-overlay">
+                                    <h4 class="movie-title">${movie.title}</h4>
+                                    <p class="movie-meta">
+                                        <span>${movie.year || 'N/A'}</span>
+                                        <span class="movie-rating"><i class="fas fa-star"></i> 7.5</span>
+                                    </p>
+                                    <div class="movie-overlay-buttons">
+                                        <button class="overlay-btn" onclick="event.stopPropagation(); addToList('${movie.slug}')">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <button class="overlay-btn" onclick="event.stopPropagation(); viewMovie('${movie.slug}')">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="movie-info">
+                                <h4 class="movie-title">${movie.title}</h4>
+                                <p class="movie-meta">
+                                    <span>${movie.year || 'N/A'}</span>
+                                    <span class="movie-rating"><i class="fas fa-star"></i> 7.5</span>
+                                </p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading category movies:', error);
+            }
+        }
+
+        // View movie function
+        function viewMovie(slug) {
+            window.location.href = `/movie/${slug}`;
+        }
+
+        // Add to list function
+        function addToList(slug) {
+            // Get current list from localStorage
+            let myList = JSON.parse(localStorage.getItem('metflic_myList') || '[]');
+            
+            // Check if already in list
+            if (!myList.includes(slug)) {
+                myList.push(slug);
+                localStorage.setItem('metflic_myList', JSON.stringify(myList));
+                
+                // Show notification
+                showNotification('Added to My List');
+            } else {
+                showNotification('Already in My List');
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: var(--primary);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 4px;
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            `;
+            
+            // Add animation styles
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHomeData();
+            
+            // Check if we have a hero movie
+            const heroSection = document.getElementById('heroSection');
+            if (Math.random() > 0.5) { // 50% chance to show random movie hero
+                fetch('/api/home')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok && data.hero) {
+                            const hero = data.hero;
+                            heroSection.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${hero.poster}')`;
+                            heroSection.style.backgroundSize = 'cover';
+                            heroSection.style.backgroundPosition = 'center';
+                            
+                            const heroContent = heroSection.querySelector('.hero-content');
+                            heroContent.innerHTML = `
+                                <h1>${hero.title}</h1>
+                                <p>${hero.overview || 'Watch now on Metflic'}</p>
+                                <div class="hero-buttons">
+                                    <a href="/movie/${hero.slug}" class="btn btn-primary">
+                                        <i class="fas fa-play"></i> Watch Now
+                                    </a>
+                                    <button class="btn btn-secondary" onclick="addToList('${hero.slug}')">
+                                        <i class="fas fa-plus"></i> Add to List
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(console.error);
+            }
+        });
+    </script>
+</body>
+</html>     
