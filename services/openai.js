@@ -4,24 +4,26 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-export async function askKyra(user, message, memory) {
+export async function askKyra(user, message, memory = []) {
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
-    temperature: 0.4,
     messages: [
       {
         role: "system",
         content: `
-You are KYRA, a highly intelligent AI assistant for ${user}.
+You are KYRA, a friendly, intelligent AI assistant.
+User name: ${user}
 Behave like Jarvis.
-Explain reasoning step by step.
-Act as mentor, strategist, and problem solver.
-Never claim to take actions.
+Explain decisions clearly.
+Think step by step.
+Act as mentor + strategist.
+Never claim real-world actions.
 `
       },
-      ...memory,
+      ...memory.map(m => ({ role: "user", content: m })),
       { role: "user", content: message }
-    ]
+    ],
+    temperature: 0.4
   });
 
   return completion.choices[0].message.content;
