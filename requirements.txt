@@ -1,7 +1,0 @@
-Flask
-pyrogram
-tgcrypto
-sqlalchemy
-psycopg2-binary
-python-dotenv
-requests
